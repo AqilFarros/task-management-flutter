@@ -14,3 +14,5 @@ final Color appleColor = "000000".toColor();
 final Color redColor = "91322e".toColor();
 final Color yellowColor = "eacb57".toColor();
 final Color greenColor = "1f775f".toColor();
+final Color tiramisuColor = "c1bb9b".toColor();
+final Color turqoiseColor = "b1ccb5".toColor();
