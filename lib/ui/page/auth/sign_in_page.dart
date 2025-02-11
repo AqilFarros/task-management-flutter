@@ -131,14 +131,19 @@ class _SignInPageState extends State<SignInPage> {
                   const SizedBox(
                     height: defaultMargin,
                   ),
-                  isLoading
-                      ? CircularProgressIndicator(
-                          color: greenColor,
-                        )
-                      : SubmitButton(
-                          text: "Sign in",
-                          onPressed: _signIn,
-                        ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      isLoading
+                          ? CircularProgressIndicator(
+                              color: greenColor,
+                            )
+                          : SubmitButton(
+                              text: "Sign in",
+                              onPressed: _signIn,
+                            ),
+                    ],
+                  ),
                   const SizedBox(
                     height: defaultMargin * 2,
                   ),

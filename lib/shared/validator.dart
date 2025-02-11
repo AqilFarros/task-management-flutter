@@ -50,3 +50,11 @@ String? confirmPasswordValidator(
     return null;
   }
 }
+
+String? titleValidator(String? value) {
+  if (value == null || value.isEmpty) {
+    return 'Title filed can\'t be empty.';
+  } else {
+    return null;
+  }
+}

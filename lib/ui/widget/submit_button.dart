@@ -5,22 +5,23 @@ class SubmitButton extends StatelessWidget {
     super.key,
     required this.text,
     required this.onPressed,
+    this.color,
   });
 
   final String text;
   final Function onPressed;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: MediaQuery.of(context).size.width,
       child: ElevatedButton(
         onPressed: onPressed as void Function()?,
         style: ElevatedButton.styleFrom(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
-          backgroundColor: greenColor,
+          backgroundColor: color ?? greenColor,
         ),
         child: Text(
           text,
