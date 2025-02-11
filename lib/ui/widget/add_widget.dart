@@ -110,34 +110,28 @@ class _AddWidgetState extends State<AddWidget> {
                   readOnly: true,
                 ),
                 const SizedBox(height: defaultMargin),
-                Row(
-                  children: [
-                    Text(
-                      "Priority:",
-                      style: medium.copyWith(),
+                SizedBox(
+                  width: double.infinity,
+                  child: DropdownButton(
+                    value: selectedPriority,
+                    underline: Container(
+                      height: 1,
+                      color: greenColor,
                     ),
-                    const SizedBox(width: defaultMargin),
-                    DropdownButton(
-                      value: selectedPriority,
-                      underline: Container(
-                        height: 1,
-                        color: greenColor,
-                      ),
-                      items: priority!.map((e) {
-                        return DropdownMenuItem(
-                          value: e,
-                          child: Text(e),
-                        );
-                      }).toList(),
-                      onChanged: (String? value) {
-                        setDialogState(() {
-                          setState(() {
-                            selectedPriority = value!;
-                          });
+                    items: priority!.map((e) {
+                      return DropdownMenuItem(
+                        value: e,
+                        child: Text(e),
+                      );
+                    }).toList(),
+                    onChanged: (String? value) {
+                      setDialogState(() {
+                        setState(() {
+                          selectedPriority = value!;
                         });
-                      },
-                    ),
-                  ],
+                      });
+                    },
+                  ),
                 ),
               ],
             ),
