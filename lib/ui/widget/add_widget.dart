@@ -14,6 +14,16 @@ class _AddWidgetState extends State<AddWidget> {
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
 
+  List<String>? priority;
+  String? selectedPriority;
+
+  @override
+  void initState() {
+    priority = ['Low', 'Medium', 'High'];
+    selectedPriority = priority![0];
+    super.initState();
+  }
+
   Future<void> _selectDate() async {
     DateTime? picked = await showDatePicker(
         context: context,
@@ -47,64 +57,93 @@ class _AddWidgetState extends State<AddWidget> {
   void _createGoals() {
     showDialog(
       context: context,
-      builder: (BuildContext context) => AlertDialog(
-        actions: [
-          SubmitButton(
-            text: "Cancel",
-            onPressed: () {
-              _titleController.clear();
-              _descriptionController.clear();
-              _dateController.clear();
-              Navigator.pop(context);
-            },
-            color: turqoiseColor,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) => AlertDialog(
+            actions: [
+              SubmitButton(
+                text: "Cancel",
+                onPressed: () {
+                  _titleController.clear();
+                  _descriptionController.clear();
+                  _dateController.clear();
+                  Navigator.pop(context);
+                },
+                color: turqoiseColor,
+              ),
+              SubmitButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                text: "Set a goal",
+              ),
+            ],
+            title: Text(
+              widget.title,
+              style: semiBold.copyWith(fontSize: heading1),
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                InputText(
+                  controller: _titleController,
+                  hintText: "Title",
+                  icon: Icons.title_rounded,
+                  textInputType: TextInputType.text,
+                  validator: titleValidator,
+                ),
+                const SizedBox(height: defaultMargin),
+                InputText(
+                  controller: _descriptionController,
+                  hintText: "Description",
+                  icon: Icons.description,
+                  textInputType: TextInputType.text,
+                  validator: titleValidator,
+                ),
+                const SizedBox(height: defaultMargin),
+                InputText(
+                  controller: _dateController,
+                  hintText: "Deadline",
+                  icon: Icons.calendar_today,
+                  validator: titleValidator,
+                  onTap: _selectDate,
+                  readOnly: true,
+                ),
+                const SizedBox(height: defaultMargin),
+                Row(
+                  children: [
+                    Text(
+                      "Priority:",
+                      style: medium.copyWith(),
+                    ),
+                    const SizedBox(width: defaultMargin),
+                    DropdownButton(
+                      value: selectedPriority,
+                      underline: Container(
+                        height: 1,
+                        color: greenColor,
+                      ),
+                      items: priority!.map((e) {
+                        return DropdownMenuItem(
+                          value: e,
+                          child: Text(e),
+                        );
+                      }).toList(),
+                      onChanged: (String? value) {
+                        setDialogState(() {
+                          setState(() {
+                            selectedPriority = value!;
+                          });
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
-          SubmitButton(
-            onPressed: () {},
-            text: "Set a goal",
-          ),
-        ],
-        title: Text(
-          widget.title,
-          style: semiBold.copyWith(fontSize: heading1),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            InputText(
-              controller: _titleController,
-              hintText: "Title",
-              icon: Icons.title_rounded,
-              textInputType: TextInputType.text,
-              validator: titleValidator,
-            ),
-            const SizedBox(
-              height: defaultMargin,
-            ),
-            InputText(
-              controller: _descriptionController,
-              hintText: "Description",
-              icon: Icons.description,
-              textInputType: TextInputType.text,
-              validator: titleValidator,
-            ),
-            const SizedBox(
-              height: defaultMargin,
-            ),
-            InputText(
-              controller: _dateController,
-              hintText: "Deadline",
-              icon: Icons.calendar_today,
-              validator: titleValidator,
-              onTap: _selectDate,
-              readOnly: true,
-            ),
-            const SizedBox(
-              height: defaultMargin,
-            ),
-          ],
-        ),
-      ),
+        );
+      },
     );
   }
 
