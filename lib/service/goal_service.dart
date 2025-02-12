@@ -23,6 +23,7 @@ class GoalService {
       'description': description,
       'deadline': deadline,
       'priority': priority,
+      'status': 'hasn\'t started',
       'created_at': FieldValue.serverTimestamp(),
     });
   }
@@ -53,5 +54,17 @@ class GoalService {
         .collection('goals')
         .doc(goalId)
         .delete();
+  }
+
+  Future<void> updateStatus(
+      {required String goalId, required String status}) async {
+    await firestore
+        .collection('users')
+        .doc(userId)
+        .collection('goals')
+        .doc(goalId)
+        .update({
+      'status': status,
+    });
   }
 }

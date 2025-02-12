@@ -14,6 +14,8 @@ class _AddWidgetState extends State<AddWidget> {
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
 
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   List<String>? priority;
   String? selectedPriority;
 
@@ -55,6 +57,38 @@ class _AddWidgetState extends State<AddWidget> {
   }
 
   void _createGoals() {
+    void storeGoals() async {
+      if (_formKey.currentState!.validate()) {
+        try {
+          await GoalService().storeGoal(
+            title: _titleController.text,
+            description: _descriptionController.text,
+            deadline: _dateController.text,
+            priority: selectedPriority!,
+          );
+
+          if (mounted) {
+            successSnackbar(
+                context: context, message: "Successfully set a goal.");
+          }
+        } catch (e) {
+          if (mounted) {
+            dangerSnackbar(context: context, message: e.toString());
+          }
+        } finally {
+          _dateController.clear();
+          _descriptionController.clear();
+          _titleController.clear();
+          setState(() {
+            selectedPriority = priority![0];
+          });
+          if (mounted) {
+            Navigator.pop(context);
+          }
+        }
+      }
+    }
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -73,7 +107,7 @@ class _AddWidgetState extends State<AddWidget> {
               ),
               SubmitButton(
                 onPressed: () {
-                  Navigator.pop(context);
+                  storeGoals();
                 },
                 text: "Set a goal",
               ),
@@ -82,58 +116,61 @@ class _AddWidgetState extends State<AddWidget> {
               widget.title,
               style: semiBold.copyWith(fontSize: heading1),
             ),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                InputText(
-                  controller: _titleController,
-                  hintText: "Title",
-                  icon: Icons.title_rounded,
-                  textInputType: TextInputType.text,
-                  validator: titleValidator,
-                ),
-                const SizedBox(height: defaultMargin),
-                InputText(
-                  controller: _descriptionController,
-                  hintText: "Description",
-                  icon: Icons.description,
-                  textInputType: TextInputType.text,
-                  validator: titleValidator,
-                ),
-                const SizedBox(height: defaultMargin),
-                InputText(
-                  controller: _dateController,
-                  hintText: "Deadline",
-                  icon: Icons.calendar_today,
-                  validator: titleValidator,
-                  onTap: _selectDate,
-                  readOnly: true,
-                ),
-                const SizedBox(height: defaultMargin),
-                SizedBox(
-                  width: double.infinity,
-                  child: DropdownButton(
-                    value: selectedPriority,
-                    underline: Container(
-                      height: 1,
-                      color: greenColor,
-                    ),
-                    items: priority!.map((e) {
-                      return DropdownMenuItem(
-                        value: e,
-                        child: Text(e),
-                      );
-                    }).toList(),
-                    onChanged: (String? value) {
-                      setDialogState(() {
-                        setState(() {
-                          selectedPriority = value!;
-                        });
-                      });
-                    },
+            content: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  InputText(
+                    controller: _titleController,
+                    hintText: "Title",
+                    icon: Icons.title_rounded,
+                    textInputType: TextInputType.text,
+                    validator: titleValidator,
                   ),
-                ),
-              ],
+                  const SizedBox(height: defaultMargin),
+                  InputText(
+                    controller: _descriptionController,
+                    hintText: "Description",
+                    icon: Icons.description,
+                    textInputType: TextInputType.text,
+                    validator: titleValidator,
+                  ),
+                  const SizedBox(height: defaultMargin),
+                  InputText(
+                    controller: _dateController,
+                    hintText: "Deadline",
+                    icon: Icons.calendar_today,
+                    validator: titleValidator,
+                    onTap: _selectDate,
+                    readOnly: true,
+                  ),
+                  const SizedBox(height: defaultMargin),
+                  SizedBox(
+                    width: double.infinity,
+                    child: DropdownButton(
+                      value: selectedPriority,
+                      underline: Container(
+                        height: 1,
+                        color: greenColor,
+                      ),
+                      items: priority!.map((e) {
+                        return DropdownMenuItem(
+                          value: e,
+                          child: Text(e),
+                        );
+                      }).toList(),
+                      onChanged: (String? value) {
+                        setDialogState(() {
+                          setState(() {
+                            selectedPriority = value!;
+                          });
+                        });
+                      },
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         );

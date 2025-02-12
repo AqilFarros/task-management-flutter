@@ -54,4 +54,13 @@ class AuthService {
       rethrow;
     }
   }
+
+  Future<Map<String, dynamic>> getUser() async {
+    final DocumentSnapshot userDoc = await firestore
+        .collection("users")
+        .doc(currentUser!.uid)
+        .get();
+
+        return userDoc.data() as Map<String, dynamic>;
+  }
 }
